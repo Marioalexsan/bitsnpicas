@@ -40,6 +40,7 @@ public class BitmapExportPanel extends JPanel implements BitmapExportOptions {
 	private final BitmapExportColorPanel colorPanel;
 	private final BitmapExportPSFPanel psfPanel;
 	private final BitmapExportPlaydatePanel playdatePanel;
+	private final BitmapExportNFTRPanel nftrPanel;
 	private final JButton exportButton;
 	
 	public BitmapExportPanel(BitmapFont font) {
@@ -56,6 +57,7 @@ public class BitmapExportPanel extends JPanel implements BitmapExportOptions {
 		this.colorPanel = new BitmapExportColorPanel();
 		this.psfPanel = new BitmapExportPSFPanel();
 		this.playdatePanel = new BitmapExportPlaydatePanel();
+		this.nftrPanel = new BitmapExportNFTRPanel();
 		this.exportButton = new JButton("Export");
 		
 		JPanel nonePanel = new BitmapExportLabelPanel("This format has no options.");
@@ -78,6 +80,7 @@ public class BitmapExportPanel extends JPanel implements BitmapExportOptions {
 		formatOptionsPanel.add(colorPanel, "color");
 		formatOptionsPanel.add(psfPanel, "psf");
 		formatOptionsPanel.add(playdatePanel, "playdate");
+		formatOptionsPanel.add(nftrPanel, "nftr");
 		formatOptionsPanel.add(v1Panel, "v1");
 		formatOptionsPanel.add(nonePanel, "none");
 		
@@ -263,5 +266,10 @@ public class BitmapExportPanel extends JPanel implements BitmapExportOptions {
 	@Override
 	public boolean getPlaydateSeparate() {
 		return playdatePanel.getSeparate();
+	}
+	
+	@Override
+	public int getNFTRBitDepth() {
+		return nftrPanel.getBitDepth();
 	}
 }

@@ -211,6 +211,10 @@ public enum ImportFormat {
 		public boolean recognize(FileProxy fp) { return fp.hasExtension(".hmzk"); }
 		public FontImporter<?> createImporter() { return new HMZKBitmapFontImporter(); }
 	},
+	NFTR {
+		public boolean recognize(FileProxy fp) { return fp.hasExtension(".nftr"); }
+		public FontImporter<?> createImporter() { return new NFTRBitmapFontImporter(); }
+	},
 	
 	// **** Add new formats above this line. ****
 	
