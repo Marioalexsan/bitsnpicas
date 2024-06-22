@@ -173,7 +173,7 @@ public enum BitmapExportFormat {
 			return new HMZKBitmapFontExporter();
 		}
 	},
-	NFTR("NFTR (Nintendo Font Resource)", ".nftr", "nftr") {
+	NFTR("NFTR (Nitro Font Resource)", ".nftr", "nftr") {
 		public BitmapFontExporter createExporter(BitmapExportOptions o) {
 			return new NFTRBitmapFontExporter(o.getNFTRBitDepth());
 		}
