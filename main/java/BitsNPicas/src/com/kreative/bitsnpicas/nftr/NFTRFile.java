@@ -1,6 +1,9 @@
 package com.kreative.bitsnpicas.nftr;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.SortedMap;
@@ -47,7 +50,7 @@ public class NFTRFile {
 		while (nextMapOffset != 0) {
 			in.seek((int) (nextMapOffset - 8));
 			CMAPChunk map = new CMAPChunk();
-			map.read(in, nftr.version);
+			map.read(in, nftr.version, finf.encoding);
 			nextMapOffset = map.nextMapOffset;
 			cmap.add(map);
 		}
@@ -65,7 +68,7 @@ public class NFTRFile {
 		int[] charMapStarts = new int[cmap.size()];
 		for (int i = 0; i < cmap.size(); i++) {
 			charMapStarts[i] = out.tell();
-			cmap.get(i).write(out, nftr.version, false);
+			cmap.get(i).write(out, nftr.version, finf.encoding, false);
 		}
 		
 		int end = out.tell();
@@ -89,11 +92,11 @@ public class NFTRFile {
 				cmap.get(i).nextMapOffset = charMapStarts[i + 1] + 8;
 			}
 			
-			cmap.get(i).write(out, nftr.version, true);
+			cmap.get(i).write(out, nftr.version, finf.encoding, true);
 		}
 	}
 	
-	public void fromBitmapFont(BitmapFont font, byte bitDepth) {
+	public void fromBitmapFont(BitmapFont font, byte bitDepth, byte charEncoding) throws IOException {
 		cmap.clear();
 		nftr.version = VERSION_1_2;
 		
@@ -112,7 +115,7 @@ public class NFTRFile {
 		ArrayList<Integer> currentTiles = new ArrayList<Integer>();
 		
 		for (Entry<Integer, BitmapFontGlyph> pair: font.characters(false).entrySet()) {
-			int charNo = pair.getKey();
+			int charNo = encodeChar(pair.getKey());
 			int tileNo = tiles.size();
 			
 			// NFTR doesn't support code points above 65535
@@ -287,7 +290,7 @@ public class NFTRFile {
 		nftr.chunkCount = 3 + cmap.size();
 	}
 	
-	public BitmapFont toBitmapFont() {
+	public BitmapFont toBitmapFont() throws IOException {
 		int emAscent = finf.extraBearingY;
 		int emDescent = finf.glyphHeight - emAscent;
 		
@@ -307,7 +310,7 @@ public class NFTRFile {
 
 		for (CMAPChunk map : cmap) {
 			for (Entry<Integer, Integer> pair : map.charTileMap.entrySet()) {
-				int charNo = pair.getKey();
+				int charNo = decodeChar(pair.getKey());
 				int tileNo = pair.getValue();
 
 				int tileIndex = tileNo - cwdh.firstTile;
@@ -322,5 +325,41 @@ public class NFTRFile {
 		}
 		
 		return font;
+	}
+
+	private static final ByteBuffer BYTEBUFFER = ByteBuffer.allocate(2);
+	private static final CharBuffer CHARBUFFER = CharBuffer.allocate(1);
+
+	private int decodeChar(int character) throws IOException {
+		BYTEBUFFER.put(0, (byte)((character >>> 8) & 0xFF));
+		BYTEBUFFER.put(1, (byte)(character & 0xFF));
+		
+		switch (this.finf.encoding) {
+		case FINFChunk.ENCODING_UTF8:
+		case FINFChunk.ENCODING_UTF16:
+			return character;
+		case FINFChunk.ENCODING_SHIFTJIS:
+			return Charset.forName("Shift_JIS").decode(BYTEBUFFER).charAt(0);
+		case FINFChunk.ENCODING_WINDOWS1252:
+			return Charset.forName("Windows-1252").decode(BYTEBUFFER).charAt(0);
+		default:
+			throw new IOException("Unknown encoding");
+		}
+	}
+	
+	private int encodeChar(int character) throws IOException {
+		CHARBUFFER.put(0, (char) character);
+		
+		switch (this.finf.encoding) {
+		case FINFChunk.ENCODING_UTF8:
+		case FINFChunk.ENCODING_UTF16:
+			return character;
+		case FINFChunk.ENCODING_SHIFTJIS:
+			return Charset.forName("Shift_JIS").encode(CHARBUFFER).getShort();
+		case FINFChunk.ENCODING_WINDOWS1252:
+			return Charset.forName("Windows-1252").encode(CHARBUFFER).getShort();
+		default:
+			throw new IOException("Unknown encoding");
+		}
 	}
 }

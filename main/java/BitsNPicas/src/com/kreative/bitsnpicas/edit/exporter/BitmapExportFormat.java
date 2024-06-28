@@ -175,7 +175,7 @@ public enum BitmapExportFormat {
 	},
 	NFTR("NFTR (Nitro Font Resource)", ".nftr", "nftr") {
 		public BitmapFontExporter createExporter(BitmapExportOptions o) {
-			return new NFTRBitmapFontExporter(o.getNFTRBitDepth());
+			return new NFTRBitmapFontExporter(o.getNFTRBitDepth(), o.getNFTRCharEncoding());
 		}
 	},
 	

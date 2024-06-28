@@ -1,12 +1,15 @@
 package com.kreative.bitsnpicas.nftr;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
 public class CMAPChunk {
 	public static final String SIGNATURE = "PAMC";
-
+	
 	public long chunkSize;
 	public int firstChar;
 	public int lastChar;
@@ -15,7 +18,7 @@ public class CMAPChunk {
 	public HashMap<Integer, Integer> charTileMap = new HashMap<Integer, Integer>();
 	public int firstTileNo;
 	
-	public void read(ByteStreamReader in, int version) throws IOException {
+	public void read(ByteStreamReader in, int version, byte charEncoding) throws IOException {
 		in.readSignature(SIGNATURE);
 		chunkSize = in.readUInt();
 		firstChar = in.readUShort();
@@ -55,7 +58,7 @@ public class CMAPChunk {
 		}
 	}
 	
-	public void write(ByteStreamWriter out, int version, boolean offsetsOnly) throws IOException {
+	public void write(ByteStreamWriter out, int version, byte charEncoding, boolean offsetsOnly) throws IOException {
 		switch (mapType) {
 		case 0:
 			chunkSize = 20 + 2;
@@ -116,4 +119,5 @@ public class CMAPChunk {
 		while (out.tell() % 4 != 0)
 			out.writeByte(0);
 	}
+	
 }

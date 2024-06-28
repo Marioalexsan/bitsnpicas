@@ -28,4 +28,5 @@ public interface BitmapExportOptions {
 	public boolean getPSFUnicodeTable();
 	public boolean getPlaydateSeparate();
 	public int getNFTRBitDepth();
+	public int getNFTRCharEncoding();
 }

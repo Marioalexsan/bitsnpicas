@@ -25,9 +25,11 @@ import com.kreative.bitsnpicas.nftr.NFTRFile;
  */
 public class NFTRBitmapFontExporter implements BitmapFontExporter {
 	private int tileDepthBits;
+	private int charEncoding;
 	
-	public NFTRBitmapFontExporter(int tileDepthBits) {
+	public NFTRBitmapFontExporter(int tileDepthBits, int charEncoding) {
 		this.tileDepthBits = tileDepthBits;
+		this.charEncoding = charEncoding;
 	}
 	
 	@Override
@@ -54,7 +56,7 @@ public class NFTRBitmapFontExporter implements BitmapFontExporter {
 		ByteStreamWriter out = new ByteStreamWriter();
 		
 		NFTRFile file = new NFTRFile();
-		file.fromBitmapFont(font, (byte) tileDepthBits);
+		file.fromBitmapFont(font, (byte) tileDepthBits, (byte) charEncoding);
 		file.write(out);
 		
 		byte[] finalBytes = out.getBytes();

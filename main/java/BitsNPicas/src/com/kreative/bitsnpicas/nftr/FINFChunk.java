@@ -5,6 +5,11 @@ import java.io.IOException;
 public class FINFChunk {
 	public static final String SIGNATURE = "FNIF";
 
+	public static final byte ENCODING_UTF8 = 0; // Unsupported
+	public static final byte ENCODING_UTF16 = 1;
+	public static final byte ENCODING_SHIFTJIS = 2;
+	public static final byte ENCODING_WINDOWS1252 = 3;
+
 	public long chunkSize;
 	public byte unknown1;
 	public short lineGap;
@@ -33,6 +38,15 @@ public class FINFChunk {
 		defaultWidth = in.readByte();
 		defaultAdvance = in.readByte();
 		encoding = in.readByte();
+		
+		boolean unknownEncoding =
+				encoding != ENCODING_UTF8 &&
+				encoding != ENCODING_UTF16 &&
+				encoding != ENCODING_SHIFTJIS &&
+				encoding != ENCODING_WINDOWS1252;
+		
+		if (unknownEncoding)
+			throw new IOException("Encoding " + Byte.toString(encoding) + " is not supported.");
 
 		charGlyphOffset = in.readUInt();
 		charWidthOffset = in.readUInt();

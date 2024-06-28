@@ -46,7 +46,7 @@ public class NFTRBitmapFontImporter implements BitmapFontImporter {
 
 		NFTRFile file = new NFTRFile();
 		file.read(in);
-		
+	
 		return file.toBitmapFont();
 	}
 }

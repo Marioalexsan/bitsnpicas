@@ -272,4 +272,9 @@ public class BitmapExportPanel extends JPanel implements BitmapExportOptions {
 	public int getNFTRBitDepth() {
 		return nftrPanel.getBitDepth();
 	}
+	
+	@Override
+	public int getNFTRCharEncoding() {
+		return nftrPanel.getCharEncoding();
+	}
 }
