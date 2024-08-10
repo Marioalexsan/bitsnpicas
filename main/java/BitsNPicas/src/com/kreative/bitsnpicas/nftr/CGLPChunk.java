@@ -40,9 +40,15 @@ public class CGLPChunk {
 			bitmaps[i] = in.readBitmap(boxWidth, boxHeight, bitDepth);
 
 			// Adjust bit depth to 8 bits
+			// map from [0, 2^(bitDepth - 1) - 1] to [0, 255]
+			
+			int maxValue = 1 << (bitDepth - 1);
+			
 			for (int y = 0; y < boxHeight; y++) {
 				for (int x = 0; x < boxWidth; x++) {
-					bitmaps[i][y][x] <<= 8 - bitDepth;
+					int prevValue = bitmaps[i][y][x] & 0xFF;
+					int newValue = Math.round(prevValue * 255f / maxValue);
+					bitmaps[i][y][x] = (byte)(newValue & 0xFF);
 				}
 			}
 		}
@@ -70,9 +76,15 @@ public class CGLPChunk {
 
 		for (int i = 0; i < bitmaps.length; i++) {
 			// Adjust bit depth to tileDepthBits
+			// map from [0, 255] to [0, 2^(bitDepth - 1) - 1]
+			
+			int maxValue = 1 << (bitDepth - 1);
+			
 			for (int y = 0; y < boxHeight; y++) {
 				for (int x = 0; x < boxWidth; x++) {
-					bitmaps[i][y][x] >>= 8 - bitDepth;
+					int prevValue = bitmaps[i][y][x] & 0xFF;
+					int newValue = Math.round(prevValue * maxValue / 255f);
+					bitmaps[i][y][x] = (byte)(newValue & 0xFF);
 				}
 			}
 			

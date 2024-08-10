@@ -26,12 +26,12 @@ public class BitmapExportNFTRPanel extends JPanel {
 			"Shift-JIS",
 			"Windows-1252"
 		});
-		this.bitDepth.setSelectedIndex(0);
+		this.charEncoding.setSelectedIndex(0);
 		JPanel bp = new JPanel(new GridLayout(2, 2, 4, 4));
 		bp.add(new JLabel("Bit Depth"));
 		bp.add(bitDepth);
 		bp.add(new JLabel("Character Encoding"));
-		bp.add(bitDepth);
+		bp.add(charEncoding);
 		this.setLayout(new BorderLayout());
 		this.add(bp, BorderLayout.PAGE_START);
 	}
